@@ -13,9 +13,13 @@ import LookUp from "@/data/LookUp";
 import { useContext } from "react";
 import { UserDetailContext } from "@/context/UserDetailContext";
 import { useGoogleLogin } from "@react-oauth/google";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import uuid4 from "uuid4";
 
 function SignInDialog({ openDialog, closeDialog }) {
   const { userDetail, setUserDetail } = useContext(UserDetailContext);
+  const CreateUser= useMutation(api.users.CreateUser);
 
   const googleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
@@ -26,6 +30,19 @@ function SignInDialog({ openDialog, closeDialog }) {
       );
 
       console.log(userInfo);
+      const user= userInfo.data;
+      await CreateUser({
+        name: user?.name,
+        email: user?.email,
+        picture: user?.picture,
+        uid: uuid4()
+      })
+
+      //Store user data in local storage
+      if(typeof window!==undefined){
+        localStorage.setItem('user',JSON.stringify(user));
+      }
+
       setUserDetail(userInfo.data);
       closeDialog(false);
     },
@@ -39,9 +56,9 @@ function SignInDialog({ openDialog, closeDialog }) {
           <DialogTitle></DialogTitle>
           <DialogDescription>
             <div className="flex flex-col items-center justify-center">
-              <h2 className="font-bold text-2xl text-white">
+              <p className="font-bold text-3xl text-white">
                 {LookUp.SIGNIN_HEADING}
-              </h2>
+              </p>
               <p className="mt-2 text-center">{LookUp.SIGNIN_SUBHEADING}</p>
               <Button 
               className="mt-1 gap-3 bg-blue-500 text-white hover:bg-blue-400"
