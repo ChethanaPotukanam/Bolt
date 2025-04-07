@@ -5,23 +5,33 @@ import Header from '@/components/ui/custom/Header'
 import { MessagesContext } from '@/context/MessagesContext'
 import { useState } from 'react'
 import { UserDetailContext } from '@/context/UserDetailContext'
+import { GoogleOAuthProvider } from "@react-oauth/google";
+
 function Provider({ children }) {
   const [messages, setMessages] = useState()
   const [userDetail,setUserDetail]=useState()
   return (
-    <UserDetailContext.Provider value={{userDetail,setUserDetail}}>
-      <MessagesContext.Provider value={{ messages, setMessages }}>
-        <NextThemesProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem
-          disableTransitionOnChange>
-          <Header />
+    <div>
+      <GoogleOAuthProvider
+        clientId={process.env.NEXT_PUBLIC_GOOGLE_AUTH_CLIENT_ID_KEY}
+      >
+        <UserDetailContext.Provider value={{ userDetail, setUserDetail }}>
+          <MessagesContext.Provider value={{ messages, setMessages }}>
+            <NextThemesProvider
+              attribute="class"
+              defaultTheme="dark"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <Header />
 
-          {children}</NextThemesProvider>
-      </MessagesContext.Provider>
-    </UserDetailContext.Provider>
-  )
+              {children}
+            </NextThemesProvider>
+          </MessagesContext.Provider>
+        </UserDetailContext.Provider>
+      </GoogleOAuthProvider>
+    </div>
+  );
 }
 
 export default Provider

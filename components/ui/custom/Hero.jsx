@@ -47,7 +47,10 @@ function Hero() {
                     <h2 key={index} onClick={()=>onGenerate(suggestion)} className='p-1 px-2 border rounded-full text-sm text-gray-400 hover:text-white cursor-pointer'>{suggestion}</h2>
                 ))}
             </div>
-            <SignInDialog openDialog={openDialog}/>
+            <SignInDialog 
+            openDialog={openDialog}
+            closeDialog={(value)=>setOpenDialog(value)}
+            />
         </div>
     )
 }
